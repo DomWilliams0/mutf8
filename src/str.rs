@@ -1,5 +1,5 @@
 use std::borrow::{Borrow, Cow, ToOwned};
-use std::fmt::{Debug, Formatter, Result as FResult};
+use std::fmt::{Debug, Display, Formatter, Result as FResult};
 use std::ops::Deref;
 
 use crate::mutf8_to_utf8;
@@ -377,5 +377,11 @@ impl AsRef<mstr> for MString {
 impl Debug for mstr {
 	fn fmt(&self, f: &mut Formatter) -> FResult {
 		Debug::fmt(self.to_utf8().as_ref(), f)
+	}
+}
+
+impl Display for mstr {
+	fn fmt(&self, f: &mut Formatter<'_>) -> FResult {
+		Display::fmt(self.to_utf8().as_ref(), f)
 	}
 }
