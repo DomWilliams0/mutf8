@@ -13,6 +13,11 @@ pub struct MString {
 	inner: Box<[u8]>,
 }
 
+pub trait StrExt {
+	fn as_mstr(&'static self) -> &'static mstr;
+	fn to_mstr(&self) -> Cow<mstr>;
+}
+
 impl MString {
 	pub fn from_utf8(input: &[u8]) -> MString {
 		let boxed_data = match utf8_to_mutf8(input) {
@@ -190,6 +195,15 @@ impl mstr {
 		unsafe { &*(bytes as *const [u8] as *const mstr) }
 	}
 
+	pub fn from_literal(utf8: &'static str) -> &mstr {
+		if cfg!(debug_assertions) {
+			let encoded = Self::from_utf8(utf8.as_bytes());
+			assert!(matches!(encoded, Cow::Borrowed(_)), "literal is not utf8");
+		}
+
+		Self::from_mutf8(utf8.as_bytes())
+	}
+
 	/// Returns the length of the string, in bytes.
 	#[inline]
 	pub fn len(&self) -> usize {
@@ -299,6 +313,16 @@ impl mstr {
 	#[inline]
 	pub fn last_mut(&mut self) -> Option<&mut u8> {
 		self.bytes.last_mut()
+	}
+}
+
+impl StrExt for str {
+	fn as_mstr(&'static self) -> &'static mstr {
+		mstr::from_literal(self)
+	}
+
+	fn to_mstr(&self) -> Cow<mstr> {
+		mstr::from_utf8(self.as_bytes())
 	}
 }
 

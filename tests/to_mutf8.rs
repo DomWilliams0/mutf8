@@ -1,5 +1,5 @@
-use mutf8::mutf8_to_utf8;
 use mutf8::utf8_to_mutf8;
+use mutf8::{mutf8_to_utf8, StrExt};
 
 macro_rules! assert_owned {
 	($var:ident, $msg:expr) => {{
@@ -39,4 +39,17 @@ fn nul_test() {
 		data,
 		"Data not owned. [A nul byte needs two bytes in mutf8]"
 	);
+}
+
+#[test]
+fn mutf8_literal() {
+	// wont panic
+	"nice".as_mstr();
+}
+
+#[test]
+#[should_panic]
+fn mutf8_literal_bad() {
+	// will panic
+	"cool\0nice".as_mstr();
 }

@@ -16,4 +16,4 @@ pub use mutf8::utf8_to_mutf8;
 pub use crate::str::MString;
 
 #[cfg(feature = "use-structs")]
-pub use crate::str::mstr;
+pub use crate::str::{mstr, StrExt};
